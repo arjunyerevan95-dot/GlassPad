@@ -1,6 +1,9 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/GlassPad.Engine.Tests/GlassPad.Engine.Tests.csproj" />
+    <Project Path="src/GlassPad.Engine/GlassPad.Engine.csproj" />
     <Project Path="src/GlassPad.PadTest/GlassPad.PadTest.csproj" />
+    <Project Path="src/GlassPad.SystemTest/GlassPad.SystemTest.csproj" />
     <Project Path="src/GlassPad/GlassPad.csproj" />
   </Folder>
 </Solution>

@@ -1,0 +1,3 @@
+SDK 2.0.3.0: loaded 337 profiles.
+PASS xbox-one-s: 1,003 states match StandardAxes; 100,000 updates allocate 0 bytes.
+PASS xbox-360-wired: 1,003 states match StandardAxes; 100,000 updates allocate 0 bytes.

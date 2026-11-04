@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0-windows10.0.26100.0</TargetFramework><RuntimeIdentifier>win-x64</RuntimeIdentifier><OutputType>Exe</OutputType><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup>
+  <ItemGroup><ProjectReference Include="..\GlassPad.Engine\GlassPad.Engine.csproj" /><PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" /><Compile Include="..\GlassPad\Queens\XInputOutput.cs" Link="XInputOutput.cs" /><Compile Include="..\GlassPad\Queens\Native.cs" Link="Native.cs" /><Compile Include="..\GlassPad\Queens\TabletGyro.cs" Link="TabletGyro.cs" /></ItemGroup>
+</Project>

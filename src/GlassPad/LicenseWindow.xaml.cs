@@ -13,6 +13,9 @@ public partial class LicenseWindow : Window
         GlassPadLicense.Text = ReadLicense("GlassPad");
         HIDMaestroLicense.Text = ReadLicense("HIDMaestro");
         ThirdPartyNotices.Text = ReadLicense("ThirdParty");
+        ForkNotices.Text = ReadLicense("Fork");
+        GplLicense.Text = ReadLicense("GPL");
+        VigemLicense.Text = ReadLicense("ViGEm");
     }
 
     private static string ReadLicense(string name)

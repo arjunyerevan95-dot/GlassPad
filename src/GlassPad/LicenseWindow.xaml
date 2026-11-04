@@ -29,10 +29,19 @@
         <TextBlock Text="Open-source licenses" Foreground="White" FontSize="22"
                    FontWeight="SemiBold" Margin="0,0,0,16" />
         <TabControl Grid.Row="1" Padding="0" Background="#202038" BorderThickness="0">
+            <TabItem Header="This fork" Padding="14,8" IsSelected="True">
+                <TextBox x:Name="ForkNotices" AutomationProperties.Name="Fork source attribution" />
+            </TabItem>
+            <TabItem Header="GPL 3" Padding="14,8">
+                <TextBox x:Name="GplLicense" AutomationProperties.Name="GPL version 3" />
+            </TabItem>
+            <TabItem Header="ViGEm" Padding="14,8">
+                <TextBox x:Name="VigemLicense" AutomationProperties.Name="ViGEm MIT license" />
+            </TabItem>
             <TabItem Header="GlassPad" Padding="14,8">
                 <TextBox x:Name="GlassPadLicense" AutomationProperties.Name="GlassPad MIT license" />
             </TabItem>
-            <TabItem Header="HIDMaestro" Padding="14,8" IsSelected="True">
+            <TabItem Header="HIDMaestro" Padding="14,8">
                 <TextBox x:Name="HIDMaestroLicense" AutomationProperties.Name="HIDMaestro MIT license" />
             </TabItem>
             <TabItem Header="Third-party notices" Padding="14,8">

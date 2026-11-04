@@ -9,7 +9,9 @@
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>img\glasspad_icon.ico</ApplicationIcon>
-    <Version>1.0.2</Version>
+    <Version>1.1.0</Version>
+    <InformationalVersion>1.1.0-queens-pilot</InformationalVersion>
+    <AssemblyName>GlassPad.Queens</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,12 +24,24 @@
     <EmbeddedResource Include="..\..\LICENSE" LogicalName="GlassPad.Licenses.GlassPad" />
     <EmbeddedResource Include="..\..\lib\HIDMaestro\LICENSE" LogicalName="GlassPad.Licenses.HIDMaestro" />
     <EmbeddedResource Include="..\..\lib\HIDMaestro\THIRD-PARTY-NOTICES.txt" LogicalName="GlassPad.Licenses.ThirdParty" />
-    <None Include="..\..\LICENSE" Link="GlassPad-LICENSE.txt"
-          CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
-    <None Include="..\..\lib\HIDMaestro\LICENSE" Link="HIDMaestro-LICENSE.txt"
-          CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
-    <None Include="..\..\lib\HIDMaestro\THIRD-PARTY-NOTICES.txt" Link="THIRD-PARTY-NOTICES.txt"
-          CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <None Include="..\..\LICENSE" Link="GlassPad-LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <None Include="..\..\lib\HIDMaestro\LICENSE" Link="HIDMaestro-LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <None Include="..\..\lib\HIDMaestro\THIRD-PARTY-NOTICES.txt" Link="THIRD-PARTY-NOTICES.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="Switch.System.Windows.Input.Stylus.DisableStylusAndTouchSupport" Value="true" />
+    <ProjectReference Include="..\GlassPad.Engine\GlassPad.Engine.csproj" />
+    <None Include="..\..\profiles\*.json" Link="profiles\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="..\GlassPad.XInputBridge\bin\xinput1_3.dll" Link="bridge\xinput1_3.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Condition="Exists('..\GlassPad.XInputBridge\bin\xinput1_3.dll')" />
+    <None Include="..\..\COPYING" Link="COPYING" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="..\..\FORK-NOTICES.md" Link="FORK-NOTICES.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="..\..\lib\ViGEmClient-LICENSE.txt" Link="ViGEmClient-LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="..\..\lib\dotnet-notices\*" Link="notices\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <EmbeddedResource Include="..\..\COPYING" LogicalName="GlassPad.Licenses.GPL" />
+    <EmbeddedResource Include="..\..\FORK-NOTICES.md" LogicalName="GlassPad.Licenses.Fork" />
+    <EmbeddedResource Include="..\..\lib\ViGEmClient-LICENSE.txt" LogicalName="GlassPad.Licenses.ViGEm" />
+    <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
   </ItemGroup>
 
 </Project>

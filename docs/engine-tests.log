@@ -1,0 +1,11 @@
+PASS floating stick starts neutral at any edge, stable owner, radial clamp, re-anchor
+PASS atomic simultaneous move + look + attack + jump/dash; same-action owners
+PASS attack hold and release while looking; generic explicit toggle/slide
+PASS swipe rate/delivery/frame phase matrix; no backlog after stalls
+PASS radial centre cancellation, drag release, tap-open, hold popup
+PASS tap-run single pulse, deliberate hold-run hysteresis
+PASS focus/hide/profile/menu/editor/power/shutdown cancellation
+PASS profile validation, round trip, atomic save, cancellation and DPI normalization
+PASS other fingers' stationary frame samples do not cancel swipe look
+PASS gyro bias/deadzone/axis/inversion, composition, expiry and menu gating
+PASS 1309 assertions; all engine suites complete

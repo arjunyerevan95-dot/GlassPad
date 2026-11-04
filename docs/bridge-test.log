@@ -1,0 +1,6 @@
+Foreground PID 23248; test PID 8352
+Existing occupied XInput slots: 
+Reported UserIndex: 1
+Pilot XInput slot: 1
+PASS game-local bridge routes the existing pilot pad to first XInput slot; calls 1
+PASS stale heartbeat and disposal restore unmodified system XInput path

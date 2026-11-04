@@ -1,0 +1,13 @@
+LIBRARY xinput1_3
+EXPORTS
+ XInputGetState=GPGetState @2
+ XInputSetState=GPSetState @3
+ XInputGetCapabilities=GPGetCapabilities @4
+ XInputEnable=GPEnable @5
+ XInputGetDSoundAudioDeviceGuids=GPGetDSound @6
+ XInputGetBatteryInformation=GPGetBattery @7
+ XInputGetKeystroke=GPGetKeystroke @8
+ GPGetStateEx @100 NONAME
+ GPWaitGuide @101 NONAME
+ GPCancelGuide @102 NONAME
+ GPPowerOff @103 NONAME

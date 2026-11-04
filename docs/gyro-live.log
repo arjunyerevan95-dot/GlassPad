@@ -1,0 +1,4 @@
+Tablet gyro ready • off \\?\ACPI#AMDI0080#1#{09485f5a-759e-42c2-bd4b-a349b75c8643}\{BBCFC71B-C1E0-4BB3-BBA7-280EBB776E16}
+Stationary calibration yaw -1.0091, pitch -0.0013 deg/s
+Actual sensor callbacks: 112; calibrated stationary peak stick 0.0000; Tablet gyro ON
+PASS ACPI tablet sensor stream, calibration, default off, menu/focus suspension. Physical rotation/detached use pending owner check.
