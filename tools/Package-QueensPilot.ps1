@@ -10,6 +10,7 @@ if($LASTEXITCODE){throw 'Native bridge build failed.'}
 if($LASTEXITCODE){throw 'Self-contained publish failed.'}
 New-Item -ItemType Directory -Path (Join-Path $glassOutput 'tools') -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Install-QueensBridge.ps1') -Destination (Join-Path $glassOutput 'tools')
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'New-QueensShortcut.ps1') -Destination (Join-Path $glassOutput 'tools')
 Copy-Item -LiteralPath (Join-Path $glassRepo 'docs') -Destination $glassOutput -Recurse
 Copy-Item -LiteralPath (Join-Path $glassRepo 'README.md') -Destination $glassOutput
 Copy-Item -LiteralPath (Join-Path $glassRepo 'CONTINUATION.md') -Destination $glassOutput

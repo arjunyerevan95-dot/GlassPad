@@ -4,6 +4,12 @@ Extract the whole x64 package, start Queen's Domain in borderless/windowed mode,
 then open Launch-GlassPad.cmd. No SDK is required. Only this fork's temporary
 virtual pad is created; existing controller settings are preserved.
 
+On Arjun's PC, the Desktop shortcut "GlassPad Queens Touch Controls" starts the
+game and overlay together. It reuses already-running processes. To recreate it
+for another extracted folder, run tools/New-QueensShortcut.ps1 with -GameLauncher
+pointing to the game launcher and -PilotExecutable pointing to GlassPad.Queens.exe.
+The shortcut uses a hidden PowerShell command without changing execution policy.
+
 If the game needs first-player compatibility, quit it and run
 `tools\Install-QueensBridge.ps1 -GameExecutable "<shipping exe path>"` once. The
 installer checks the verified executable SHA256, preserves unknown existing DLLs
