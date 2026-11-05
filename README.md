@@ -53,10 +53,11 @@ Build with `src\GlassPad.XInputBridge\build.cmd`, then
 `dotnet build src\GlassPad -c Release`. Engine checks:
 `dotnet run --project src\GlassPad.Engine.Tests -c Release`. The original upstream
 offline PadTest remains available. Full test records, current limitations and
-owner checks are in `docs/` and `CONTINUATION.md`. R3 includes the reproduced
-move/look regression fix, visible gyro setup and controller reconnection after
-resume. Owner confirmation of the repaired physical behavior remains pending;
-passing engine tests alone are not native gameplay acceptance.
+owner checks are in `docs/` and `CONTINUATION.md`. R4 fixes sustained multitouch
+falsely tripping the UI watchdog; the owner confirmed move + swipe look is now
+reliable. Visible gyro setup and controller reconnection after resume are included.
+Detached-tablet gyro feel, four-contact gameplay, progression-dependent actions,
+physical resume and a valid performance comparison remain open.
 
 Original GlassPad and dependency MIT notices are preserved. New engine/Queens
 code is GPL-3.0-or-later; SwipeAim adapts BCDMouseJoystick from the touch fork.

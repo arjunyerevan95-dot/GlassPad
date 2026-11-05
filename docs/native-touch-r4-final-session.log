@@ -1,0 +1,7 @@
+PASS test overlay preserves original foreground; lab emits no controller output
+PASS UI-stall fixture has a held action in the real overlay router
+PASS genuine UI-thread stall releases held input through the independent publisher
+Injection structure bytes 144; desktop 1440x900; points 259,651 893,281 1276,698 1349,544 1194,561
+FAIL System.InvalidOperationException: Input lab is not the visible input target at all five points; injection was withheld.
+   at GlassPad.Queens.TouchIntegration.<RunAsync>g__Inject|5_1(UInt32 flag, <>c__DisplayClass5_0&) in C:\Users\arjun\Documents\Codex\2026-11-04\execute-the-attached-work-order-end\GlassPad\src\GlassPad\Queens\TouchIntegration.cs:line 26
+   at GlassPad.Queens.TouchIntegration.RunAsync(Window owner, String directory) in C:\Users\arjun\Documents\Codex\2026-11-04\execute-the-attached-work-order-end\GlassPad\src\GlassPad\Queens\TouchIntegration.cs:line 52

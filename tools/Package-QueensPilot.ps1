@@ -17,12 +17,12 @@ Copy-Item -LiteralPath (Join-Path $glassRepo 'CONTINUATION.md') -Destination $gl
 $glassCommit=(& git -C $glassRepo rev-parse HEAD).Trim()
 if($LASTEXITCODE){throw 'Could not record source commit.'}
 $glassManifest=[ordered]@{
-    version='1.1.0-R3'; sourceCommit=$glassCommit
+    version='1.1.0-R4'; sourceCommit=$glassCommit
     upstreamBase='94fd8c46610a5c614dc938f06648e1f7a30c7d4c'
     sourceUrl="https://github.com/arjunyerevan95-dot/GlassPad/tree/$glassCommit"
     branch='wo-glasspad-queens-001'; runtime='Self-contained Windows x64 .NET 10'
     driver='Uses existing ViGEm; no driver installer is run'
-    physicalAcceptance='Pending owner move/look, four-contact, gyro and resume retest'
+    physicalAcceptance='Owner confirmed reliable move/look; four-contact gameplay, gyro feel, physical resume and performance comparison remain pending'
 }
 $glassManifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $glassOutput 'BUILD.json') -Encoding UTF8
 Write-Output "Packaged $glassCommit in $glassOutput"

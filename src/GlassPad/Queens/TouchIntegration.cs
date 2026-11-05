@@ -8,18 +8,26 @@ using GlassPad.Engine;
 namespace GlassPad.Queens;
 internal static class TouchIntegration
 {
+    private sealed class InputTargetUnavailableException(string message) : Exception(message) { }
     [StructLayout(LayoutKind.Sequential)]private struct PointerInfo
     {public uint Type,Id,Frame,Flags;public nint Source,Target;public Native.Point Pixel,Himetric,PixelRaw,HimetricRaw;public uint Time,History;public int Input;public uint Keys;public ulong Performance;public uint ButtonChange;}
     [StructLayout(LayoutKind.Sequential)]private struct TouchInfo
     {public PointerInfo Pointer;public uint Flags,Mask;public Native.Rect Contact,ContactRaw;public uint Orientation,Pressure;}
     [DllImport("user32.dll",SetLastError=true)]private static extern bool InitializeTouchInjection(uint max,uint feedback);
     [DllImport("user32.dll",SetLastError=true)]private static extern bool InjectTouchInput(uint count,[In]TouchInfo[] contacts);
+    [DllImport("user32.dll")]private static extern nint WindowFromPoint(Native.Point point);
     internal static async Task RunAsync(Window owner,string directory)
     {
         Directory.CreateDirectory(directory);var lines=new List<string>();GameplayOverlay? overlay=null;var contacts=new TouchInfo[5];var down=false;
         void Check(bool result,string label){if(!result)throw new Exception(label);lines.Add("PASS "+label);}
         void Inject(uint flag)
-        {for(int i=0;i<contacts.Length;i++)contacts[i].Pointer.Flags=flag;if(!InjectTouchInput((uint)contacts.Length,contacts))throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(),"InjectTouchInput");}
+        {
+            var target=overlay is null?0:new WindowInteropHelper(overlay).Handle;
+            if(flag==0x10006&&contacts.Any(c=>WindowFromPoint(c.Pointer.Pixel)!=target))
+                throw new InputTargetUnavailableException("Input lab is not the visible input target at all five points; injection was withheld.");
+            for(int i=0;i<contacts.Length;i++)contacts[i].Pointer.Flags=flag;
+            if(!InjectTouchInput((uint)contacts.Length,contacts))throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(),"InjectTouchInput");
+        }
         try
         {
             owner.Width=Math.Min(1000,SystemParameters.WorkArea.Width-40);owner.Height=Math.Min(620,SystemParameters.WorkArea.Height-60);owner.Left=SystemParameters.WorkArea.Left+10;owner.Top=SystemParameters.WorkArea.Top+10;owner.UpdateLayout();
@@ -27,6 +35,13 @@ internal static class TouchIntegration
             var originalForeground=Native.GetForegroundWindow();
             overlay=new GameplayOverlay(profile,hwnd);overlay.Show();await Task.Delay(500);
             Check(Native.GetForegroundWindow()==originalForeground,"test overlay preserves original foreground; lab emits no controller output");
+            // Exercise the real independent publisher without requiring an interactive
+            // touch target. Blocking this UI thread must still release a held action.
+            var fixtureControl=profile.Controls.First(c=>c.Id=="primary");var fixtureNow=Native.Now;
+            overlay.Router.Process(new(10001,TouchPhase.Down,new(fixtureControl.X*overlay.ActualWidth,fixtureControl.Y*overlay.ActualHeight),fixtureNow,fixtureNow),fixtureNow);
+            Check(overlay.Router.Sample(Native.Now).RT==255,"UI-stall fixture has a held action in the real overlay router");
+            System.Threading.Thread.Sleep(275);
+            Check(overlay.Router.Sample(Native.Now).Neutral&&overlay.Router.View(Native.Now).Contacts==0,"genuine UI-thread stall releases held input through the independent publisher");
             if(!InitializeTouchInjection(10,3))throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(),"InitializeTouchInjection");
             var w=overlay.ActualWidth;var h=overlay.ActualHeight;var u=Math.Min(w,h);
             Vec Control(string id){var c=profile.Controls.First(x=>x.Id==id);return new(c.X*w,c.Y*h);}
@@ -36,10 +51,23 @@ internal static class TouchIntegration
             for(int i=0;i<contacts.Length;i++){contacts[i]=new(){Pointer=new(){Type=2,Id=(uint)(1+i)},Mask=7,Orientation=90,Pressure=512};Locate(i,positions[i]);}
             lines.Add($"Injection structure bytes {Marshal.SizeOf<TouchInfo>()}; desktop {Native.GetSystemMetrics(0)}x{Native.GetSystemMetrics(1)}; points "+string.Join(" ",contacts.Select(c=>$"{c.Pointer.Pixel.X},{c.Pointer.Pixel.Y}")));
             Inject(0x10006);down=true;await Task.Delay(60);
+            lines.Add($"Initial delivery: contacts {overlay.Router.View(Native.Now).Contacts}; packets {overlay.TouchMetrics.Packets}; roles "+System.Text.Json.JsonSerializer.Serialize(overlay.Router.Assignments()));
             Check(overlay.Router.View(Native.Now).Contacts==5,"five simultaneous native contacts arrive in one central router");
             positions[0]+=new Vec(u*.15,0);positions[1]+=new Vec(u*.03,0);for(int i=0;i<5;i++)Locate(i,positions[i]);Inject(0x20006);await Task.Delay(12);
             var state=overlay.Router.Sample(Native.Now);
             Check(state.LX>.5&&state.RX>0&&state.RT==255&&(state.Buttons&0x1200)==0x1200,"native WM_POINTER frame delivers move + swipe + attack + jump + dash simultaneously");
+            // Reproduce a starved Background drawing timer while native input keeps
+            // progressing. A live message pump must not discard held contact owners.
+            overlay.PauseVisualsForInputTest();var sustained=true;var movingSamples=0;
+            for(int frame=0;frame<80;frame++)
+            {
+                positions[1]+=new Vec(frame%2==0?u*.004:-u*.004,0);
+                for(int i=0;i<5;i++)Locate(i,positions[i]);Inject(0x20006);await Task.Delay(8);
+                state=overlay.Router.Sample(Native.Now);
+                sustained &= overlay.Router.View(Native.Now).Contacts==5&&state.LX>.5&&state.RT==255&&(state.Buttons&0x1200)==0x1200;
+                if(state.RX!=0)movingSamples++;
+            }
+            Check(sustained&&movingSamples>20,"sustained native multitouch survives >600ms without background drawing ticks");
             await Task.Delay(80);state=overlay.Router.Sample(Native.Now);Check(state.RX==0&&state.RT==255&&state.LX>.5,"stationary swipe expires independently while move and attack remain held");
             for(int i=0;i<contacts.Length;i++)contacts[i].Pointer.Flags=i==2?0x40000u:0x20006u;
             if(!InjectTouchInput((uint)contacts.Length,contacts))throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());await Task.Delay(25);
@@ -49,6 +77,7 @@ internal static class TouchIntegration
             lines.Add($"Native packets {overlay.TouchMetrics.Packets}; maximum contacts {overlay.TouchMetrics.Contacts}");
             lines.Add("PHYSICAL Legion Go multitouch, palm rejection and finger timing still require hands-on verification.");
         }
+        catch(InputTargetUnavailableException e){lines.Add("UNAVAILABLE "+e.Message);}
         catch(Exception e){lines.Add("FAIL "+e);}
         finally{if(down){try{Inject(0x40000);}catch{}}overlay?.Close();File.WriteAllLines(Path.Combine(directory,"native-touch-integration.log"),lines);}
     }

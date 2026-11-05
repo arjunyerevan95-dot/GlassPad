@@ -24,6 +24,8 @@ internal sealed class GameplayOverlay : Window
     private bool _closing,_driverReady;
     private double _nextReconnect;
     private long _uiHeartbeat=Environment.TickCount64;
+    private bool _uiStalled;
+    private int _uiWatchdogReleases;
     private Native.Rect _lastBounds;
     private RouterView? _previous;
     private string _status="Connecting…";
@@ -72,7 +74,11 @@ internal sealed class GameplayOverlay : Window
         lock(_router.Gate)
         {
             if(_closing)return;
-            if(Environment.TickCount64-Interlocked.Read(ref _uiHeartbeat)>200)_router.Clear("UI stalled • inputs released");
+            if(Environment.TickCount64-Interlocked.Read(ref _uiHeartbeat)>200)
+            {
+                if(!_uiStalled){_router.Clear("UI stalled • inputs released");_uiWatchdogReleases++;_uiStalled=true;}
+            }
+            else _uiStalled=false;
             _router.SetFocus(_testTarget!=0||_game!=0&&Native.GetForegroundWindow()==_game);
             try{if(_driverReady)_output.Publish(_router.Sample(Native.Now));}
             catch(Exception ex){_driverReady=false;_status="Controller disconnected: "+ex.Message;_router.Clear(_status);}
@@ -113,7 +119,7 @@ internal sealed class GameplayOverlay : Window
             try
             {
                 Directory.CreateDirectory(Settings.Root);var path=Path.Combine(Settings.Root,"live-status.json");
-                File.WriteAllText(path+".tmp",System.Text.Json.JsonSerializer.Serialize(new{At=DateTimeOffset.Now,GameFound=_game!=0,view.Focused,Driver=_status,view.MenuMode,view.Hidden,view.Gyro,TabletGyro=_gyro.Status,NativeTouchPackets=_nativePackets,MaximumConcurrentContacts=_maxContacts,ObservedMoveLookAttackJump=_observedMoveLookAttackJump,view.State,TouchDigitizer=Native.GetSystemMetrics(94),MaximumHardwareTouches=Native.GetSystemMetrics(95)},new System.Text.Json.JsonSerializerOptions{WriteIndented=true}));File.Move(path+".tmp",path,true);
+                File.WriteAllText(path+".tmp",System.Text.Json.JsonSerializer.Serialize(new{At=DateTimeOffset.Now,GameFound=_game!=0,view.Focused,Driver=_status,view.MenuMode,view.Hidden,view.Gyro,TabletGyro=_gyro.Status,NativeTouchPackets=_nativePackets,MaximumConcurrentContacts=_maxContacts,ObservedMoveLookAttackJump=_observedMoveLookAttackJump,UiWatchdogReleases=_uiWatchdogReleases,view.State,TouchDigitizer=Native.GetSystemMetrics(94),MaximumHardwareTouches=Native.GetSystemMetrics(95)},new System.Text.Json.JsonSerializerOptions{WriteIndented=true}));File.Move(path+".tmp",path,true);
             }
             catch{}
         }
@@ -153,6 +159,10 @@ internal sealed class GameplayOverlay : Window
     }
     private nint Hook(nint hwnd,int msg,nint wParam,nint lParam,ref bool handled)
     {
+        // Native input can keep the UI thread busy while a Background-priority drawing
+        // timer is starved. Dispatching these messages proves the UI is progressing.
+        // The watchdog must measure the message pump, not the rendering schedule.
+        Interlocked.Exchange(ref _uiHeartbeat,Environment.TickCount64);
         if(msg is 0x21 or 0x024b){handled=true;return (nint)3;} // MA_NOACTIVATE / PA_NOACTIVATE
         if(msg is 0x0245 or 0x0246 or 0x0247)
         {
@@ -215,6 +225,7 @@ internal sealed class GameplayOverlay : Window
         return 0;
     }
     public void Resume(GameProfile profile){_router.Configure(profile);_router.SetEnabled(true);Locate();_previous=null;}
+    internal void PauseVisualsForInputTest()=>_visualTimer.Stop();
     private void PowerChanged(object sender,PowerModeChangedEventArgs e)
     {
         _router.Clear("Power transition • inputs released");_router.SetGyroEnabled(false);

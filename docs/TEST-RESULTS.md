@@ -53,10 +53,37 @@ an already disconnected target and reconnects through the existing driver after
 resume or a disconnection. Actual physical suspend/resume still needs retesting.
 
 The owner resumed gameplay in R3 and the live trace reached three simultaneous
-physical contacts. This observation does not establish all requested behaviors.
-The current self-contained package is R3. Owner confirmation is pending. Injection is not
+physical contacts, but reported move+look still fails intermittently ("very spotty").
+The earlier zero-delta repair was insufficient; the R4 diagnosis below followed.
+Injection is not
 physical touchscreen evidence; observed real touch contacts are not full gameplay
 acceptance. Charged/special/throw/item semantics depend on available equipment.
+
+## R4 sustained-input repair
+
+The owner's diagnostic captured 3,319 raw physical samples with no cancellation
+events. Five times, the router lost both contact roles while Windows continued
+delivering both fingers every 6–10 ms. Ownership disappeared about 200 ms after
+the second finger arrived. The watchdog used a Background-priority drawing timer
+as its UI heartbeat, so sustained native input could falsely look like a UI freeze.
+
+R4 also renews the heartbeat when the native window hook dispatches messages.
+The independent publisher still releases inputs if the UI actually stops
+progressing. The native integration check now pauses background drawing and
+delivers 80 sustained five-contact updates for >600 ms: all owners/buttons remain,
+swipe output is present, stationary expiry and final release still pass. R4's
+physical trace then exceeded 8,000 samples with no unexplained owner losses and
+zero watchdog releases. The owner confirmed: **"Reliable now"** for move + swipe look.
+
+The actual overlay's independent publisher also neutralizes a held action during
+a deliberate 275 ms UI-thread freeze. This check passes independently of touch
+injection. During the last handoff the native desktop pipe disappeared and the
+game was no longer running. An initial native recheck failed first-contact
+delivery. A new self-target guard confirmed the input lab was not the visible
+target at its injection points and withheld further injection. The final repeat
+of that native portion is therefore unavailable in the changed desktop session;
+the earlier R4 native pass and the owner's real gameplay confirmation remain the
+evidence for sustained touch. No broad desktop automation fallback was used.
 
 ## Remaining checks
 

@@ -1,0 +1,14 @@
+Recorded from the successful 5 November 2026 11:18 local integration run.
+PASS test overlay preserves original foreground; lab emits no controller output
+Injection structure bytes 144; desktop 1440x900; points 259,651 893,281 1276,698 1349,544 1194,561
+PASS five simultaneous native contacts arrive in one central router
+PASS native WM_POINTER frame delivers move + swipe + attack + jump + dash simultaneously
+PASS sustained native multitouch survives >600ms without background drawing ticks
+PASS stationary swipe expires independently while move and attack remain held
+PASS releasing attack preserves other fingers and their capture ownership
+PASS all five native releases neutralize the controller
+PASS native touches do not activate overlay or forward mouse clicks
+Native packets 84; maximum contacts 5
+PHYSICAL Legion Go multitouch, palm rejection and finger timing still require hands-on verification.
+Owner subsequently confirmed R4 move + swipe look: Reliable now.
+The later desktop session lost its native helper and visible test target; see TEST-RESULTS.md.
