@@ -22,6 +22,7 @@ internal sealed class GameplayOverlay : Window
     private readonly nint _testTarget;
     private int _tick;
     private bool _closing,_driverReady;
+    private double _nextReconnect;
     private long _uiHeartbeat=Environment.TickCount64;
     private Native.Rect _lastBounds;
     private RouterView? _previous;
@@ -82,6 +83,16 @@ internal sealed class GameplayOverlay : Window
         if(_closing)return;
         Interlocked.Exchange(ref _uiHeartbeat,Environment.TickCount64);
         if(++_tick%30==0)Locate();
+        if(!_driverReady&&_testTarget==0&&_game!=0&&Native.Now>=_nextReconnect)
+        {
+            _nextReconnect=Native.Now+5;
+            lock(_router.Gate)
+            {
+                _router.Clear("Reconnecting controller • inputs released");
+                try{_output.Dispose();_output.Connect();_driverReady=true;_status="ViGEm reconnected";}
+                catch(Exception ex){_status="Controller unavailable: "+ex.Message;}
+            }
+        }
         var focused=_testTarget!=0||_game!=0&&Native.GetForegroundWindow()==_game;
         var style=Native.GetWindowLongPtr(_hwnd,-20).ToInt64();
         Native.SetWindowLongPtr(_hwnd,-20,(nint)(focused?style&~0x20L:style|0x20L));
@@ -95,7 +106,7 @@ internal sealed class GameplayOverlay : Window
             _router.SetSize(ActualWidth,ActualHeight);
         }
         _surface.DriverStatus=_status;
-        _gyro.Sync();_surface.GyroStatus=_gyro.Status;
+        try{_gyro.Sync();}catch(Exception ex){_router.SetGyroEnabled(false);_status="Gyro suspended: "+ex.Message;}_surface.GyroStatus=_gyro.Status;
         var view=_router.View(Native.Now);
         if(_tick%30==0)
         {
@@ -204,7 +215,12 @@ internal sealed class GameplayOverlay : Window
         return 0;
     }
     public void Resume(GameProfile profile){_router.Configure(profile);_router.SetEnabled(true);Locate();_previous=null;}
-    private void PowerChanged(object sender,PowerModeChangedEventArgs e){_router.Clear("Power transition • inputs released");}
+    private void PowerChanged(object sender,PowerModeChangedEventArgs e)
+    {
+        _router.Clear("Power transition • inputs released");_router.SetGyroEnabled(false);
+        if(e.Mode==PowerModes.Resume&&!Dispatcher.HasShutdownStarted)
+            Dispatcher.BeginInvoke(new Action(()=>{lock(_router.Gate){_driverReady=false;_nextReconnect=0;_output.Dispose();_status="Resume • waiting to reconnect controller";}}));
+    }
     private void Cleanup(object? sender,EventArgs e)
     {
         _closing=true;_visualTimer.Stop();_publisher.Dispose();_gyro.Dispose();SystemEvents.PowerModeChanged-=PowerChanged;

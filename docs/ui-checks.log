@@ -1,3 +1,4 @@
 PASS actual editor has 123 fields; scroll extent 3495 > viewport 599
 PASS actual editor cancellation preserves original and disk
 PASS actual editor Save persists position, size, control opacity and global opacity atomically
+PASS actual Restore Defaults restores approved layout, double-tap sprint and verified game deadzone

@@ -22,11 +22,14 @@ editor. Secondary attack is LT, not an assumed aim latch.
 Menu mode is manual: More → Toggle menu mode or Ctrl+Alt+M. Return to gameplay
 mode after closing game menus. Its controller D-pad/stick, Confirm/Back and
 shoulders/triggers are separate from gameplay look/gyro. Ctrl+Alt+G hides/recovers;
-a small upper-right Show tab remains. Ctrl+Alt+Q stops the overlay. Close the
-launcher to exit the app.
+a small upper-right Show tab remains. Ctrl+Alt+Q exits the app and releases its
+controller. Closing the launcher also exits.
 
-Gyro is off at launch. Select Gyro, then keep still for1.5 seconds. If calibration
-detects motion, it stays off. The editor offers calibration, sensitivity, deadzone,
+Gyro is off at launch. Select Gyro in Actions. If calibration is needed, keep the
+tablet still and press Start in the visible setup panel; it settles for 600 ms
+and samples for 1.5 seconds. A cancelled or moving calibration leaves gyro off.
+After a saved calibration, selecting Gyro toggles it ON/OFF. The editor offers
+recalibration, sensitivity, deadzone,
 axis, display orientation and inversion. Menu/editor/hide/focus loss suppress it.
 
 Settings are isolated in `%AppData%\GlassPad-Queens-Pilot`. Each game profile has

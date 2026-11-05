@@ -4,6 +4,7 @@ using GlassPad.Engine;
 namespace GlassPad.Queens;
 internal static class Settings
 {
+    public const string Build="1.1.0-R3";
     internal static string? TestRoot { get; set; }
     public static string Root=>TestRoot??Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"GlassPad-Queens-Pilot");
     public static string ProfilePath=>Path.Combine(Root,"profiles","queens-domain-approved.json");

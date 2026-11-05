@@ -26,4 +26,4 @@ The optional game-local XInput bridge is new GPL-3.0-or-later source; it forward
 to the installed Microsoft System32 XInput library and does not redistribute it.
 The self-contained package includes Microsoft .NET10.0.10 runtime notices under
 notices/. The runtime is distributed under its own accompanying license.
-This is an unofficial draft pilot; no endorsement by upstream authors is implied.
+This is an unofficial pilot; no endorsement by upstream authors is implied.

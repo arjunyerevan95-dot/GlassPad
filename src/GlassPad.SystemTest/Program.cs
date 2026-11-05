@@ -7,6 +7,13 @@ using Windows.Devices.Sensors;
 using Nefarius.ViGEm.Client;
 using System.Reflection;
 
+if(args.Contains("--calibrate-profile"))
+{
+    var index=Array.IndexOf(args,"--calibrate-profile");var destination=args[index+2];var p=ProfileStore.Parse(File.ReadAllText(File.Exists(destination)?destination:args[index+1]));
+    var bias=await TabletGyro.CalibrateAsync(p);p.Gyro.BiasX=bias.Yaw;p.Gyro.BiasY=bias.Pitch;p.Gyro.CalibratedAt=DateTimeOffset.Now.ToString("O");ProfileStore.SaveAtomic(destination,p);
+    Console.WriteLine($"PASS verified tablet stationary calibration saved: yaw {bias.Yaw:F4}, pitch {bias.Pitch:F4} deg/s; gyro still defaults OFF");return;
+}
+
 if(args.Contains("--gyro-live"))
 {
     var profile=GameProfile.QueensDraft();var gyroRouter=new ContactRouter(profile);gyroRouter.SetFocus(true);

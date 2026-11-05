@@ -16,7 +16,7 @@ internal sealed class Launcher : Window
     private readonly TextBlock _status;
     public Launcher(string[] args)
     {
-        Title="GlassPad • Queen’s Domain • Editable pilot";Width=1160;Height=820;MinWidth=820;MinHeight=600;Background=new SolidColorBrush(Color.FromRgb(17,24,22));Foreground=Brushes.WhiteSmoke;
+        Title="GlassPad • Queen’s Domain • "+Settings.Build;Width=Math.Min(1160,SystemParameters.WorkArea.Width);Height=Math.Min(820,SystemParameters.WorkArea.Height);MinWidth=820;MinHeight=600;Background=new SolidColorBrush(Color.FromRgb(17,24,22));Foreground=Brushes.WhiteSmoke;
         _previewRouter=new(_profile);_preview=new(_previewRouter){Preview=true};
         var root=new DockPanel{Margin=new Thickness(22)};Content=root;
         var title=new TextBlock{Text="GlassPad / Queen’s Domain",FontSize=26,Margin=new Thickness(0,0,0,6)};DockPanel.SetDock(title,Dock.Top);root.Children.Add(title);
@@ -26,7 +26,7 @@ internal sealed class Launcher : Window
         Button("Start overlay",StartOverlay);Button("Customize Controls",Edit);Button("Radial preview",()=>{_previewRouter.PreviewPanel(_previewRouter.View(Native.Now).Panel=="radial"?"":"radial");_preview.InvalidateVisual();});
         Button("Touch targets",()=>{_preview.DebugTargets=!_preview.DebugTargets;_preview.InvalidateVisual();});
         Button("Choose profile",ChooseProfile);Button("Export profile",Export);Button("Licenses",()=>new LicenseWindow{Owner=this}.ShowDialog());
-        _status=new TextBlock{Text="Floating left movement · open swipe look · hold either attack and drag to look\nActions → More → Customize Controls · Ctrl+Alt+G hide/recover · Ctrl+Alt+M menu mode · Ctrl+Alt+Q exit overlay",Foreground=Brushes.LightGray,TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,12,0,0)};
+        _status=new TextBlock{Text="Floating left movement · open swipe look · hold either attack and drag to look\nActions → More → Customize Controls · Ctrl+Alt+G hide/recover · Ctrl+Alt+M menu mode · Ctrl+Alt+Q exit app",Foreground=Brushes.LightGray,TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,12,0,0)};
         DockPanel.SetDock(_status,Dock.Bottom);root.Children.Add(_status);
         var view=new Viewbox{Stretch=Stretch.Uniform,Child=_preview};_preview.Width=1280;_preview.Height=800;_previewRouter.SetSize(1280,800);root.Children.Add(view);
         Closed+=(_,_)=>{_overlay?.Close();Application.Current.Shutdown();};
@@ -45,7 +45,7 @@ internal sealed class Launcher : Window
         _overlay=new(_profile);_overlay.CustomizeRequested+=Edit;_overlay.ProfilesRequested+=ChooseProfile;
         _overlay.AutoSelected+=p=>{_profile=p;_previewRouter.Configure(p);_preview.InvalidateVisual();};
         _overlay.Closed+=(_,_)=>{_overlay=null;_status.Text="Overlay closed • all virtual input released.";};_overlay.Show();
-        _status.Text="Overlay running. Return to Queen’s Domain; input activates only for the verified game executable in foreground.\nCtrl+Alt+G hide/recover · Ctrl+Alt+M manual menu mode · Ctrl+Alt+Q stop overlay";
+        _status.Text="Overlay running. Return to Queen’s Domain; input activates only for the verified game executable in foreground.\nCtrl+Alt+G hide/recover · Ctrl+Alt+M manual menu mode · Ctrl+Alt+Q exit app";
         WindowState=WindowState.Minimized;
     }
     private void Edit()
@@ -73,7 +73,9 @@ internal sealed class Launcher : Window
             _previewRouter.PreviewPanel(panel);_preview.DebugTargets=debug;_preview.Measure(new Size(1280,800));_preview.Arrange(new Rect(0,0,1280,800));_preview.InvalidateVisual();_preview.UpdateLayout();
             var bitmap=new RenderTargetBitmap(1920,1200,144,144,PixelFormats.Pbgra32);bitmap.Render(_preview);var encoder=new PngBitmapEncoder();encoder.Frames.Add(BitmapFrame.Create(bitmap));using var file=File.Create(Path.Combine(directory,name+".png"));encoder.Save(file);
         }
-        Render("queens-domain-draft-overlay","",false);Render("queens-domain-draft-radial","radial",false);Render("queens-domain-draft-targets","",true);
-        ProfileStore.SaveAtomic(Path.Combine(directory,"queens-domain-draft.json"),_profile);
+        var prefix=_profile.Approval=="Approved"?"queens-domain-approved":"queens-domain-draft";
+        Render(prefix+"-overlay","",false);Render(prefix+"-radial","radial",false);Render(prefix+"-targets","",true);
+        Render(prefix+"-gyro-setup","gyroCalibrate",false);
+        ProfileStore.SaveAtomic(Path.Combine(directory,prefix+".json"),_profile);
     }
 }

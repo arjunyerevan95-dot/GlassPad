@@ -34,6 +34,10 @@ internal static class UiChecks
             saveEditor.ShowDialog();var saved=ProfileStore.Parse(File.ReadAllText(Settings.ProfilePath));var first=saved.Controls.First(c=>c.Id=="primary");
             if(Math.Abs(first.X-.72)>.001||Math.Abs(first.Size-.12)>.001||Math.Abs(first.Opacity-.44)>.001||Math.Abs(saved.Opacity-.63)>.001)throw new Exception("Editor Save failed to persist actual bound values");
             if(profile.Controls[0].X==.72)throw new Exception("Editor mutated supplied profile");log.Add("PASS actual editor Save persists position, size, control opacity and global opacity atomically");
+            var restore=new ProfileEditor(saved){Owner=owner};restore.Loaded+=(_,_)=>restore.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,new Action(()=>{restore.TestChange("X",.66);restore.TestRestore();restore.TestSave();}));restore.ShowDialog();
+            var defaults=ProfileStore.Parse(File.ReadAllText(Settings.ProfilePath));
+            if(Math.Abs(defaults.Controls[0].X-.886)>.001||defaults.Sprint!="DoubleTap"||Math.Abs(defaults.Look.GameDeadzone-.16)>.001)throw new Exception("Restore lost approved layout or verified calibration");
+            log.Add("PASS actual Restore Defaults restores approved layout, double-tap sprint and verified game deadzone");
         }
         catch(Exception ex){log.Add("FAIL "+ex);}
         finally

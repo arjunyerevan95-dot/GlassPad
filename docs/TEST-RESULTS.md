@@ -13,6 +13,7 @@ The normal pilot never calls its driver installer.
   DPI scaling, gyro composition and focus/mode release are covered.
 - Actual WPF editor:123 fields; scroll extent3495 > viewport599. Cancel preserves
   original and disk. Save persists position, size and both opacity levels atomically.
+  Restore Defaults restores the approved layout, double-tap sprint and deadzone0.16.
 - Existing ViGEm driver1.21.442: **254 actual XInput readback reports** pass,
   including simultaneous engine state, triggers, axes/buttons/hats,100 press/release
   cycles, neutralization, disposal and reconnection. No driver installation.
@@ -44,7 +45,16 @@ tablet motion but communicated that only in a small status strip. R2 adds a
 visible Start-calibration panel, settling interval, progress state and cancel,
 and labels the radial entry ON/OFF. Gyro remains off if calibration fails.
 
-R2 is running for physical retest. Owner confirmation is pending. Injection is not
+R3 repeats all five-contact native checks and 254 live XInput readbacks successfully.
+A stationary tablet calibration was saved locally to the owner's isolated profile;
+device-specific bias is excluded from the shipped default. After an extended
+interruption, the older target reported InvalidTarget. R3 clears input, tolerates
+an already disconnected target and reconnects through the existing driver after
+resume or a disconnection. Actual physical suspend/resume still needs retesting.
+
+The owner resumed gameplay in R3 and the live trace reached three simultaneous
+physical contacts. This observation does not establish all requested behaviors.
+The current self-contained package is R3. Owner confirmation is pending. Injection is not
 physical touchscreen evidence; observed real touch contacts are not full gameplay
 acceptance. Charged/special/throw/item semantics depend on available equipment.
 
@@ -57,6 +67,8 @@ progression-dependent actions; sleep/resume with physical held contacts.
 PresentMon2.6 ETW capture requires elevation (access denied without it). No FPS,
 frame-time or performance-improvement claim is made. No graphics/TDP/frame-cap
 settings were changed. The owner confirmed the reported restart was manual.
+An attempted CPU comparison was rejected because the scene changed during the
+sample; see PERFORMANCE.md.
 
 Existing saves/config were backed up locally outside the repo and package. The
 initial five game slots were empty; live testing started in an empty slot.

@@ -36,8 +36,8 @@ Wind Dash and Interact are direct. Radial held actions open a Hold row so a
 cancelled selection never fires an attack. Equipment entries cycle; no direct
 weapon-slot bindings were invented.
 
-Ctrl+Alt+G hides/recovers, Ctrl+Alt+M toggles manual menu mode, Ctrl+Alt+Q stops the
-overlay. Closing the launcher exits. The app does not infer an internal game menu
+Ctrl+Alt+G hides/recovers, Ctrl+Alt+M toggles manual menu mode, Ctrl+Alt+Q exits the
+app. Closing the launcher also exits. The app does not infer an internal game menu
 from a Start/Back press. Mode, focus, profile, editor, power and exit transitions
 release inputs.
 
@@ -45,16 +45,18 @@ The actual game has Tap To Run – Gamepad ON and Run on L3, so the approved pro
 uses a deliberate double-tap pulse. Observed stick deadzone0.16 is reflected in
 calibration. Swipe sensitivity remains bounded by the game's maximum turn rate.
 Gyro defaults off and uses the ACPI AMD tablet sensor, not a controller IMU. Keep
-the tablet still for the first 1.5-second calibration. Motion rejects calibration.
+the tablet still, select Gyro and press Start in the visible calibration panel.
+After settling, it samples for 1.5 seconds. Motion rejects calibration.
 Sensitivity, axes, orientation, mode and calibration are editable.
 
 Build with `src\GlassPad.XInputBridge\build.cmd`, then
 `dotnet build src\GlassPad -c Release`. Engine checks:
 `dotnet run --project src\GlassPad.Engine.Tests -c Release`. The original upstream
 offline PadTest remains available. Full test records, current limitations and
-owner checks are in `docs/` and `CONTINUATION.md`. A live physical input problem
-reported by the owner is being debugged; passing engine tests alone are not
-native gameplay acceptance.
+owner checks are in `docs/` and `CONTINUATION.md`. R3 includes the reproduced
+move/look regression fix, visible gyro setup and controller reconnection after
+resume. Owner confirmation of the repaired physical behavior remains pending;
+passing engine tests alone are not native gameplay acceptance.
 
 Original GlassPad and dependency MIT notices are preserved. New engine/Queens
 code is GPL-3.0-or-later; SwipeAim adapts BCDMouseJoystick from the touch fork.

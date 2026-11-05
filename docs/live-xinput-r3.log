@@ -1,0 +1,6 @@
+Foreground PID 12712; test PID 12056
+Existing occupied XInput slots: 
+Reported UserIndex: 0
+slot 0: {"Buttons":0,"LT":191,"RT":73,"LX":4030,"LY":-14942,"RX":7274,"RY":-10912}
+Pilot XInput slot: 0
+PASS 254 XInput readback reports, disposal and reconnection; no driver installation or global remapping performed.

@@ -10,7 +10,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>img\glasspad_icon.ico</ApplicationIcon>
     <Version>1.1.0</Version>
-    <InformationalVersion>1.1.0-queens-pilot</InformationalVersion>
+    <InformationalVersion>1.1.0-queens-pilot-r3</InformationalVersion>
     <AssemblyName>GlassPad.Queens</AssemblyName>
   </PropertyGroup>
 

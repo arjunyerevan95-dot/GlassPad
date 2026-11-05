@@ -118,6 +118,7 @@ internal sealed class ProfileEditor : Window
         slider.Value=value;
     }
     internal void TestSelect(string id)=>_controls.SelectedItem=id;
+    internal void TestRestore(){_draft=_defaults.Clone();Refresh();}
     internal void TestSave()=>Save();
     internal void TestCancel(){DialogResult=false;Close();}
     internal (int Fields,double Extent,double Viewport) TestDiagnostics()

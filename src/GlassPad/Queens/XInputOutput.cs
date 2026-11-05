@@ -18,6 +18,7 @@ internal sealed class XInputOutput : IDisposable
     public int UserIndex => _controller?.UserIndex ?? -1;
     public void Connect()
     {
+        _last=null;_slot=-1;_submittedAt=0;
         _client=new ViGEmClient();_controller=_client.CreateXbox360Controller();_controller.AutoSubmitReport=false;_controller.Connect();
         _route=MemoryMappedFile.CreateOrOpen("Local\\GlassPadQueens.XInputRoute.v1",64);_routeView=_route.CreateViewAccessor();_routeView.Write(0,0x47505131);_routeView.Write(4,1);_routeView.Write(12,0);_routeView.Write(32,0);Publish(default);
     }
@@ -38,5 +39,9 @@ internal sealed class XInputOutput : IDisposable
         _controller.SubmitReport();_last=s;_submittedAt=now;
     }
     public int BridgePolls=>_routeView?.ReadInt32(32)??0;
-    public void Dispose(){try{Publish(default);_controller?.Disconnect();}finally{_routeView?.Write(12,0);_routeView?.Dispose();_route?.Dispose();_routeView=null;_route=null;_client?.Dispose();_controller=null;_client=null;}}
+    public void Dispose()
+    {
+        try{try{Publish(default);}catch{}try{_controller?.Disconnect();}catch{}}
+        finally{_routeView?.Write(12,0);_routeView?.Dispose();_route?.Dispose();_routeView=null;_route=null;_client?.Dispose();_controller=null;_client=null;}
+    }
 }
